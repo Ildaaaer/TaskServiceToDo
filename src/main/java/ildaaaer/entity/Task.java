@@ -1,5 +1,6 @@
 package ildaaaer.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +30,12 @@ public class Task {
 
     private Long assigneeId;
 
+    @JsonProperty("created_At")
     private LocalDateTime createdAt;
+
+    @JsonProperty("updated_At")
     private LocalDateTime updatedAt;
+
+    @JsonProperty("due_Date")
     private LocalDateTime dueDate;
 }
