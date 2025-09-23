@@ -1,0 +1,14 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/TaskService
+    password: 123
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
