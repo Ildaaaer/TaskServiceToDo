@@ -8,18 +8,20 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController // вместо @Controller
 @RequiredArgsConstructor
 public class CustomErrorController implements ErrorController {
     private static final String PATH = "/error";
 
-    ErrorAttributes errorAttributes;
-    @RequestMapping(CustomErrorController.PATH)
+    private final ErrorAttributes errorAttributes; // теперь final, инжектится через конструктор
+
+    @RequestMapping(PATH)
     public ResponseEntity<ErrorDTO> error(WebRequest request) {
         Map<String, Object> attribute = errorAttributes.getErrorAttributes(
                 request,
@@ -28,12 +30,10 @@ public class CustomErrorController implements ErrorController {
 
         return ResponseEntity
                 .status((Integer) attribute.get("status"))
-                .body(ErrorDTO
-                        .builder()
+                .body(ErrorDTO.builder()
                         .error((String) attribute.get("error"))
                         .errorDescription((String) attribute.get("message"))
                         .build()
                 );
     }
-
 }

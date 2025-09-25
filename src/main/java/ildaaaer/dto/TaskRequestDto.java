@@ -18,7 +18,7 @@ public class TaskRequestDto {
     private String title;
     private String description;
     private LocalDateTime dueDate;
-    private TaskPriority priority;
+    private TaskPriority taskPriority;
     private TaskStatus status;
     private Long assigneeId;
 }

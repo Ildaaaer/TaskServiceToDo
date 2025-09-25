@@ -1,9 +1,10 @@
 package ildaaaer.service;
 
 import ildaaaer.dto.TaskRequestDto;
+import ildaaaer.dto.TaskResponseDto;
 import ildaaaer.entity.Task;
 import ildaaaer.exceptions.BadRequestException;
-import ildaaaer.factories.TaskRequestDtoFactory;
+import ildaaaer.factories.TaskMapper;
 import ildaaaer.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
     private TaskRequestDtoFactory taskRequestDtoFactory;
 
     public List<Task> findAll() {
@@ -26,13 +29,14 @@ public class TaskService {
         return taskRepository.findById(id).orElse(null);
     }
 
-    public TaskRequestDto createTask(Task task){
-        taskRepository.findByTitle(task.getTitle())
+    public TaskResponseDto createTask(TaskRequestDto taskRequestDto){
+        taskRepository.findByTitle(taskRequestDto.getTitle())
                 .ifPresent(t -> {
                     throw new BadRequestException("Task already exists");
                 });
-        task = taskRepository.saveAndFlush(task);
-        return taskRequestDtoFactory.makeTaskRequestDTO(task);
+        Task task = taskMapper.toEntity(taskRequestDto);
+        Task savedTask = taskRepository.saveAndFlush(task);
+        return taskMapper.toResponseDto(savedTask);
     }
 
 
@@ -40,9 +44,9 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public List<Task> getTaskByUserId(Long userid){
+   /* public List<Task> getTaskByUserId(Long userid){
         return taskRepository.findByUserId(userid);
-    }
+    }*/
 
     public void delete(Long id) {
         if(!taskRepository.existsById(id)){
@@ -61,7 +65,7 @@ public class TaskService {
                         task.setDueDate(updatedTask.getDueDate());
                         return taskRepository.save(task);
                     })
-                    .orElseThrow(() -> new RuntimeException("Задача по id: " + id + "не найдена"));
+                    .orElseThrow(() -> new BadRequestException("Task with id " + id + " not found"));
         }
     }
 

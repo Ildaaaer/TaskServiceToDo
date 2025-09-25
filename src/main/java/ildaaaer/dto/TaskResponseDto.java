@@ -20,6 +20,7 @@ public class TaskResponseDto {
     private TaskStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime dueDate;
     private TaskPriority taskPriority;
     private Long assigneeId;
 }

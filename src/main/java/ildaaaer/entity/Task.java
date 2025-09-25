@@ -3,6 +3,8 @@ package ildaaaer.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +17,12 @@ import java.time.LocalDateTime;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_seq")
+    @SequenceGenerator(
+            name = "task_seq",
+            sequenceName = "task_seq",
+            allocationSize = 1
+    )
     private Long id;
 
     private String title;
@@ -31,9 +38,11 @@ public class Task {
     private Long assigneeId;
 
     @JsonProperty("created_At")
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @JsonProperty("updated_At")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @JsonProperty("due_Date")
