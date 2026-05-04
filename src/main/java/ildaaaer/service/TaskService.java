@@ -2,19 +2,19 @@ package ildaaaer.service;
 
 import ildaaaer.dto.TaskRequestDto;
 import ildaaaer.dto.TaskResponseDto;
+import ildaaaer.entity.Priority;
+import ildaaaer.entity.Status;
 import ildaaaer.entity.Task;
 import ildaaaer.exceptions.BadRequestException;
 import ildaaaer.exceptions.NotFoundException;
 import ildaaaer.factories.TaskMapper;
 import ildaaaer.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -81,17 +81,69 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public Task updateTask(Long id, Task updatedTask) {
-        return taskRepository.findById(id)
-                    .map(task -> {
-                        task.setTitle(updatedTask.getTitle());
-                        task.setDescription(updatedTask.getDescription());
-                        task.setStatus(updatedTask.getStatus());
-                        task.setTaskPriority(updatedTask.getTaskPriority());
-                        task.setDueDate(updatedTask.getDueDate());
-                        return taskRepository.save(task);
-                    })
-                    .orElseThrow(() -> new BadRequestException("Task with id " + id + " not found"));
-        }
+    public TaskResponseDto updateTask(Long id, TaskRequestDto updatedTaskDto) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Task with id " + id + " not found"));
+
+        task.setTitle(updatedTaskDto.getTitle());
+        task.setDescription(updatedTaskDto.getDescription());
+        task.setTaskStatus(updatedTaskDto.getTaskStatus());
+        task.setTaskPriority(updatedTaskDto.getTaskPriority());
+        task.setDueDate(updatedTaskDto.getDueDate());
+        task.setUpdatedAt(LocalDateTime.now());
+
+        Task saved = taskRepository.save(task);
+        return taskMapper.toResponseDto(saved);
     }
+
+    public List<TaskResponseDto> getTasksByStatus(Status status) {
+        List<Task> tasks = taskRepository.findAllByStatus(status);
+        if (tasks.isEmpty()) {
+            throw new NotFoundException("No tasks with status " + status);
+        }
+        return tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+
+    public List<TaskResponseDto> getTasksByPriority(Priority priority) {
+        List<Task> priorities = taskRepository.findAllByTaskPriority(priority);
+        if (priorities.isEmpty()) {
+            throw new NotFoundException("No tasks with priority " + priority);
+        }
+        return priorities.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+
+    public List<TaskResponseDto> getTasksByAssignee(Long assigneeId) {
+        List<Task> tasks = taskRepository.findAllByAssigneeId(assigneeId);
+        if (tasks.isEmpty()) {
+            throw new NotFoundException("No tasks for assigneeId " + assigneeId);
+        }
+        return tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+    public List<TaskResponseDto> getOverdueTasks(LocalDateTime now) {
+        List<Task> tasks = taskRepository.findAllByDueDateBefore(now);
+        if (tasks.isEmpty()) {
+            throw new NotFoundException("No overdue tasks");
+        }
+        return tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+    public List<TaskResponseDto> getTasksByStatusAndAssignee(Status status, Long assigneeId) {
+        List<Task> tasks = taskRepository.findAllByStatusAndAssigneeId(status, assigneeId);
+        if (tasks.isEmpty()) {
+            throw new NotFoundException("No tasks with status " + status + " for assigneeId " + assigneeId);
+        }
+        return tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .toList();
+    }
+
+
+}
 

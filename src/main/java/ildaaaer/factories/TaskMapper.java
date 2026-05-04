@@ -13,7 +13,7 @@ public class TaskMapper {
                 .description(dto.getDescription())
                 .dueDate(dto.getDueDate())
                 .taskPriority(dto.getTaskPriority())
-                .status(dto.getStatus())
+                .taskStatus(dto.getTaskStatus())
                 .assigneeId(dto.getAssigneeId())
                 .build();
     }
@@ -24,7 +24,7 @@ public class TaskMapper {
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .dueDate(task.getDueDate())
-                .status(task.getStatus())
+                .taskStatus(task.getTaskStatus())
                 .createdAt(task.getCreatedAt())
                 .updatedAt(task.getUpdatedAt())
                 .assigneeId(task.getAssigneeId())

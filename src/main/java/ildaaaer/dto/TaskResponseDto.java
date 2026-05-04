@@ -1,7 +1,7 @@
 package ildaaaer.dto;
 
-import ildaaaer.entity.TaskPriority;
-import ildaaaer.entity.TaskStatus;
+import ildaaaer.entity.Priority;
+import ildaaaer.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +17,10 @@ public class TaskResponseDto {
     private Long id;
     private String title;
     private String description;
-    private TaskStatus status;
+    private Status taskStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime dueDate;
-    private TaskPriority taskPriority;
+    private Priority taskPriority;
     private Long assigneeId;
 }

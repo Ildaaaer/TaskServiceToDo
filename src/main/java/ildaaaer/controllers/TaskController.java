@@ -2,8 +2,8 @@ package ildaaaer.controllers;
 
 import ildaaaer.dto.TaskRequestDto;
 import ildaaaer.dto.TaskResponseDto;
+import ildaaaer.entity.Task;
 import ildaaaer.service.TaskService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +29,14 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
-    /*@PutMapping
-    public ResponseEntity<TaskResponseDto> updateTask(@RequestBody TaskRequestDto taskRequestDto) {
-        return taskService.updateTask
-    }*/
+    @PutMapping("/tasks/{id}")
+    public ResponseEntity<TaskResponseDto> updateTask(
+            @PathVariable Long id,
+            @RequestBody TaskRequestDto updateTaskDto
+    ) {
+        TaskResponseDto updatedTask = taskService.updateTask(id, updateTaskDto);
+        return ResponseEntity.ok(updatedTask);
+    }
+
 
 }

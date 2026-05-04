@@ -1,5 +1,5 @@
 package ildaaaer.entity;
 
-public enum TaskPriority {
+public enum Priority {
     LOW, MEDIUM, HIGH
 }

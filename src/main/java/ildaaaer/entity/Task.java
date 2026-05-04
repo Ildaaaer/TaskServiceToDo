@@ -30,10 +30,10 @@ public class Task {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
+    private Status taskStatus;
 
     @Enumerated(EnumType.STRING)
-    private TaskPriority taskPriority;
+    private Priority taskPriority;
 
     private Long assigneeId;
 
@@ -47,4 +47,9 @@ public class Task {
 
     @JsonProperty("due_Date")
     private LocalDateTime dueDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id",  nullable = false)
+    private Project project;
+
 }

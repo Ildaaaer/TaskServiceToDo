@@ -1,5 +1,5 @@
 package ildaaaer.entity;
 
-public enum TaskStatus {
+public enum Status {
     TODO, IN_PROGRESS, DONE
 }
